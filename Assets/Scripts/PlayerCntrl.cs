@@ -5,20 +5,18 @@ using UnityEngine;
 public class PlayerCntrl : MonoBehaviour
 {
     public float speed;
-    public float Forcejump;
-    private float Moveinput;
+    public float jumpForce;
+    private float moveInput;
 
     private Rigidbody2D rb;
 
     private bool facingRight;
 
     //прыжок
-    private bool Checkground;
-    public Transform Feetposition;
-    public float checkradius;
-    public LayerMask WhatIsGround;
-
-
+    private bool isGrounded;
+    public Transform feetPos;
+    public float checkRadius;
+    public LayerMask whatIsGround;
 
 
     void Start()
@@ -26,32 +24,19 @@ public class PlayerCntrl : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        //On X axis: -1f is left, 1f is right
 
-        //Player Movement. Check for horizontal movement
-        if (Input.GetAxisRaw("Horizontal") > 0.5f || Input.GetAxisRaw("Horizontal") < -0.5f)
+        moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+
+        if (facingRight == false && moveInput < 0)
         {
-            transform.Translate(new Vector3(Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime, 0f, 0f));
-            if (Input.GetAxisRaw("Horizontal") < 0.5f && !facingRight)
-            {
-                //If we're moving right but not facing right, flip the sprite and set     facingRight to true.
-                Flip();
-                facingRight = true;
-            }
-            else if (Input.GetAxisRaw("Horizontal") > 0.5f && facingRight)
-            {
-                //If we're moving left but not facing left, flip the sprite and set facingRight to false.
-                Flip();
-                facingRight = false;
-            }
-
-            //If we're not moving horizontally, check for vertical movement. The "else if" stops diagonal movement. Change to "if" to allow diagonal movement.
+            Flip();
         }
-        else if (Input.GetAxisRaw("Vertical") > 0.5f || Input.GetAxisRaw("Vertical") < -0.5f)
+        else if(facingRight == true && moveInput > 0)
         {
-            transform.Translate(new Vector3(0f, Input.GetAxisRaw("Vertical") * speed * Time.deltaTime, 0f));
+            Flip();
         }
 
 
@@ -59,13 +44,12 @@ public class PlayerCntrl : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = Phisics2d.OverlapCircle(Feetposition.position,checkradius,WhatIsGround);
+        isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
 
 
-        if(isGrounded == true && Input.GetKeyDown(KeyCode.space));
+        if(isGrounded == true && Input.GetKeyDown(KeyCode.Space))
         {
-
-            rb.velocity = Vector2.up * Forcejump
+            rb.velocity = Vector2.up * jumpForce;
         }
 
 

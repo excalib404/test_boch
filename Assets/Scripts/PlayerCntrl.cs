@@ -5,9 +5,19 @@ using UnityEngine;
 public class PlayerCntrl : MonoBehaviour
 {
     public float speed;
+    public float Forcejump;
+    private float Moveinput;
+
     private Rigidbody2D rb;
 
     private bool facingRight;
+
+    //прыжок
+    private bool Checkground;
+    public Transform Feetposition;
+    public float checkradius;
+    public LayerMask WhatIsGround;
+
 
 
 
@@ -43,6 +53,21 @@ public class PlayerCntrl : MonoBehaviour
         {
             transform.Translate(new Vector3(0f, Input.GetAxisRaw("Vertical") * speed * Time.deltaTime, 0f));
         }
+
+
+    }
+
+    private void Update()
+    {
+        isGrounded = Phisics2d.OverlapCircle(Feetposition.position,checkradius,WhatIsGround);
+
+
+        if(isGrounded == true && Input.GetKeyDown(KeyCode.space));
+        {
+
+            rb.velocity = Vector2.up * Forcejump
+        }
+
 
 
     }
